@@ -45,12 +45,14 @@ func Withdraw(username string, amount float64) {
 }
 
 func Transfer(fromUser string, toUser string, amount float64) {
+
 	accounts := LoadAccounts()
 
 	fromIndex := -1
 	toIndex := -1
 
 	for i := range accounts {
+
 		if accounts[i].Username == fromUser {
 			fromIndex = i
 		}
@@ -58,22 +60,29 @@ func Transfer(fromUser string, toUser string, amount float64) {
 		if accounts[i].Username == toUser {
 			toIndex = i
 		}
-
-		if fromIndex == -1 && toIndex == -1 {
-			fmt.Println("Không tìm thấy tài khoản")
-			return
-		}
-
-		if accounts[fromIndex].Balance < amount {
-			fmt.Println("Số dư không đủ")
-			return
-		}
-
-		accounts[fromIndex].Balance -= amount
-		accounts[toIndex].Balance += amount
-
-		SaveAccounts(accounts)
-
-		fmt.Println("Chuyển tiền thành công")
 	}
+
+	// check tài khoản tồn tại
+	if fromIndex == -1 {
+		fmt.Println("Tài khoản gửi không tồn tại")
+		return
+	}
+
+	if toIndex == -1 {
+		fmt.Println("Tài khoản nhận không tồn tại")
+		return
+	}
+
+	// check số dư
+	if accounts[fromIndex].Balance < amount {
+		fmt.Println("Số dư không đủ")
+		return
+	}
+
+	accounts[fromIndex].Balance -= amount
+	accounts[toIndex].Balance += amount
+
+	SaveAccounts(accounts)
+
+	fmt.Println("Chuyển tiền thành công")
 }
